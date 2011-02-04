@@ -71,6 +71,8 @@ public static void
 main (String argv[])
 	throws java.io.IOException
 {
+	int refid = 0;
+
 	CSVWriter commits_csv = new CSVWriter (new FileWriter("commits.csv"));
 	CSVWriter branches_csv = new CSVWriter (new FileWriter("branches.csv"));
 	CSVWriter tags_csv = new CSVWriter (new FileWriter("tags.csv"));
@@ -82,8 +84,8 @@ main (String argv[])
 		"Committer", "Committer Address",
 		"Date", "Timestamp", "Parent Count",
 		"Files Changed", "Lines Added", "Lines Deleted"});
-	branches_csv.writeNext (new String[] {"Commit ID", "Branch Name"});
-	tags_csv.writeNext (new String[] {"Commit ID", "Tag Name"});
+	branches_csv.writeNext (new String[] {"Branch Key", "Commit ID", "Branch Name"});
+	tags_csv.writeNext (new String[] {"Tag Key", "Commit ID", "Tag Name"});
 
 	// Used to ensure that we do not fetch commit details more than once
 	HashSet<String> commits_seen = new HashSet<String> ();
@@ -138,6 +140,7 @@ main (String argv[])
 			commit_id = commit_id.substring (0, 10);
 
 			ref_csv.writeNext (new String[] {
+				Integer.toString (refid++),
 				AbbreviatedObjectId.fromObjectId (commit).name (),
 				refname});
 
