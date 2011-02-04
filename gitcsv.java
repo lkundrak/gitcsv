@@ -97,6 +97,11 @@ main (String argv[])
 	for (Map.Entry<String,Ref> entry : repo.getAllRefs ().entrySet ()) {
 		CSVWriter ref_csv;
 		String refname;
+
+		// We're not interested in HEAD and such
+		if (entry.getValue ().isSymbolic ())
+			continue;
+
 		if (entry.getKey ().startsWith ("refs/remotes/origin/")) {
 			ref_csv = branches_csv;
 			refname = entry.getKey ().substring ("refs/remotes/origin/".length ());
