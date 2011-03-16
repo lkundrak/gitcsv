@@ -68,7 +68,7 @@ BRANCH: foreach my $branch (branches) {
 	# Assume first is head
 	$head = $branch unless $head;
 
-	while (grep { $_ } my @row = map { chomp; $_ }
+	while (grep { $_ } my @row = map { chomp if $_; $_ }
 		map { scalar <$log> } (0..10)) {
 		if (not defined $row[10] or $row[10] eq '#') {
 			# Commit entry terminated too soon, no shortstat entry
