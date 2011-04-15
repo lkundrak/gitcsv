@@ -57,7 +57,7 @@ sub printrow
 my %processed;
 
 printrow ('Commit ID', 'Author Name', 'Author Address',
-	'Author Date', 'Author Time', 'Committer Mame',
+	'Author Date', 'Author Time', 'Committer Name',
 	'Committer Address', 'Committer Date', 'Committer Time',
 	'Subject', 'Files changed', 'Lines Added', 'Lines Deleted', 'Branch');
 
