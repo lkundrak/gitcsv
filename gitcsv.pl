@@ -49,7 +49,7 @@ sub shortlog
 sub printrow
 {
 	print join ',', map { "\"$_\"" } 
-		map { s/(["\\"])/\\$1/g; $_ }
+		map { s/"/""/g; $_ }
 		map { $_ } @_;
 	print "\n";
 }
