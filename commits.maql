@@ -1,0 +1,163 @@
+# This is MAQL script that generates project logical model.
+# See the MAQL documentation at http://developer.gooddata.com/api/maql-ddl.html for more details.
+
+# Pull in Date dimension templates
+INCLUDE TEMPLATE "URN:GOODDATA:DATE" MODIFY (IDENTIFIER "committer", TITLE "Committer");
+INCLUDE TEMPLATE "URN:GOODDATA:DATE" MODIFY (IDENTIFIER "author", TITLE "Author");
+
+# Create dataset. dataset groups all following logical model elements together.
+CREATE DATASET {dataset.commits}
+	VISUAL(TITLE "Commits");
+
+# Create the folders that group attributes and facts.
+CREATE FOLDER {dim.commits}
+	VISUAL(TITLE "Commits") TYPE ATTRIBUTE;
+CREATE FOLDER {ffld.commits}
+	VISUAL(TITLE "Commits") TYPE FACT;
+
+# Create attributes.
+# Attributes are categories that are used for slicing and dicing the numbers (facts).
+CREATE ATTRIBUTE {attr.commits.commitid}
+	VISUAL(TITLE "Commit ID", FOLDER {dim.commits})
+	AS KEYS {d_commits_commitid.id} FULLSET, {f_commits.commitid_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.commitid};
+ALTER ATTRIBUTE {attr.commits.commitid}
+	ADD LABELS {label.commits.commitid}
+	VISUAL(TITLE "Commit ID")
+	AS {d_commits_commitid.nm_commitid}; 
+ALTER ATTRIBUTE  {attr.commits.commitid}
+	DEFAULT LABEL {label.commits.commitid};
+
+CREATE ATTRIBUTE {attr.commits.subject}
+	VISUAL(TITLE "Subject", FOLDER {dim.commits})
+	AS KEYS {d_commits_subject.id} FULLSET, {f_commits.subject_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.subject};
+ALTER ATTRIBUTE {attr.commits.subject}
+	ADD LABELS {label.commits.subject}
+	VISUAL(TITLE "Subject")
+	AS {d_commits_subject.nm_subject}; 
+ALTER ATTRIBUTE  {attr.commits.subject}
+	DEFAULT LABEL {label.commits.subject};
+
+CREATE ATTRIBUTE {attr.commits.committertime}
+	VISUAL(TITLE "Committer Time", FOLDER {dim.commits})
+	AS KEYS {d_commits_committertime.id} FULLSET, {f_commits.committertime_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.committertime};
+ALTER DATATYPE {d_commits_committertime.nm_committertime} INT;
+ALTER ATTRIBUTE {attr.commits.committertime}
+	ADD LABELS {label.commits.committertime}
+	VISUAL(TITLE "Committer Time")
+	AS {d_commits_committertime.nm_committertime}; 
+ALTER ATTRIBUTE  {attr.commits.committertime}
+	DEFAULT LABEL {label.commits.committertime};
+
+CREATE ATTRIBUTE {attr.commits.branch}
+	VISUAL(TITLE "Branch", FOLDER {dim.commits})
+	AS KEYS {d_commits_branch.id} FULLSET, {f_commits.branch_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.branch};
+ALTER ATTRIBUTE {attr.commits.branch}
+	ADD LABELS {label.commits.branch}
+	VISUAL(TITLE "Branch")
+	AS {d_commits_branch.nm_branch}; 
+ALTER ATTRIBUTE  {attr.commits.branch}
+	DEFAULT LABEL {label.commits.branch};
+
+CREATE ATTRIBUTE {attr.commits.authorname}
+	VISUAL(TITLE "Author Name", FOLDER {dim.commits})
+	AS KEYS {d_commits_authorname.id} FULLSET, {f_commits.authorname_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.authorname};
+ALTER ATTRIBUTE {attr.commits.authorname}
+	ADD LABELS {label.commits.authorname}
+	VISUAL(TITLE "Author Name")
+	AS {d_commits_authorname.nm_authorname}; 
+ALTER ATTRIBUTE  {attr.commits.authorname}
+	DEFAULT LABEL {label.commits.authorname};
+
+CREATE ATTRIBUTE {attr.commits.committermame}
+	VISUAL(TITLE "Committer Name", FOLDER {dim.commits})
+	AS KEYS {d_commits_committermame.id} FULLSET, {f_commits.committermame_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.committermame};
+ALTER ATTRIBUTE {attr.commits.committermame}
+	ADD LABELS {label.commits.committermame}
+	VISUAL(TITLE "Committer Name")
+	AS {d_commits_committermame.nm_committermame}; 
+ALTER ATTRIBUTE  {attr.commits.committermame}
+	DEFAULT LABEL {label.commits.committermame};
+
+CREATE ATTRIBUTE {attr.commits.authortime}
+	VISUAL(TITLE "Author Time", FOLDER {dim.commits})
+	AS KEYS {d_commits_authortime.id} FULLSET, {f_commits.authortime_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.authortime};
+ALTER DATATYPE {d_commits_authortime.nm_authortime} INT;
+ALTER ATTRIBUTE {attr.commits.authortime}
+	ADD LABELS {label.commits.authortime}
+	VISUAL(TITLE "Author Time")
+	AS {d_commits_authortime.nm_authortime}; 
+ALTER ATTRIBUTE  {attr.commits.authortime}
+	DEFAULT LABEL {label.commits.authortime};
+
+CREATE ATTRIBUTE {attr.commits.committeraddress}
+	VISUAL(TITLE "Committer Address", FOLDER {dim.commits})
+	AS KEYS {d_commits_committeraddress.id} FULLSET, {f_commits.committeraddress_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.committeraddress};
+ALTER ATTRIBUTE {attr.commits.committeraddress}
+	ADD LABELS {label.commits.committeraddress}
+	VISUAL(TITLE "Committer Address")
+	AS {d_commits_committeraddress.nm_committeraddress}; 
+ALTER ATTRIBUTE  {attr.commits.committeraddress}
+	DEFAULT LABEL {label.commits.committeraddress};
+
+CREATE ATTRIBUTE {attr.commits.authoraddress}
+	VISUAL(TITLE "Author Address", FOLDER {dim.commits})
+	AS KEYS {d_commits_authoraddress.id} FULLSET, {f_commits.authoraddress_id};
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.authoraddress};
+ALTER ATTRIBUTE {attr.commits.authoraddress}
+	ADD LABELS {label.commits.authoraddress}
+	VISUAL(TITLE "Author Address")
+	AS {d_commits_authoraddress.nm_authoraddress}; 
+ALTER ATTRIBUTE  {attr.commits.authoraddress}
+	DEFAULT LABEL {label.commits.authoraddress};
+
+# Create facts
+# Facts are numbers that are aggregated by attributes.
+CREATE FACT {fact.commits.fileschanged}
+	VISUAL(TITLE "Files changed", FOLDER {ffld.commits})
+	AS {f_commits.f_fileschanged};
+ALTER DATASET {dataset.commits}
+	ADD {fact.commits.fileschanged};
+CREATE FACT {fact.commits.linesadded}
+	VISUAL(TITLE "Lines Added", FOLDER {ffld.commits})
+	AS {f_commits.f_linesadded};
+ALTER DATASET {dataset.commits}
+	ADD {fact.commits.linesadded};
+CREATE FACT {fact.commits.linesdeleted}
+	VISUAL(TITLE "Lines Deleted", FOLDER {ffld.commits})
+	AS {f_commits.f_linesdeleted};
+ALTER DATASET {dataset.commits}
+	ADD {fact.commits.linesdeleted};
+
+# Connect the dates to the date dimension
+ALTER ATTRIBUTE {author.date}
+	ADD KEYS {f_commits.dt_authordate_id};
+ALTER ATTRIBUTE {committer.date}
+	ADD KEYS {f_commits.dt_committerdate_id};
+
+# The facts of attribute is sort of dataset identifier.
+# It is used for count aggregations.
+CREATE ATTRIBUTE {attr.commits.factsof}
+	VISUAL(TITLE "Commits")
+	AS KEYS {f_commits.id} FULLSET;
+ALTER DATASET {dataset.commits}
+	ADD {attr.commits.factsof};
+
+# Synchronize the storage and data loading interfaces with the new logical model
+SYNCHRONIZE {dataset.commits};
