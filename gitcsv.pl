@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+#
 # Format git history into a CSV-file
 # Assigns a semi-intelligently decided branch to each commit.
 # Should be rather robust when it comes to various weirdnesses.
