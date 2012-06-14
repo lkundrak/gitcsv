@@ -1,0 +1,16 @@
+OpenProject(id="485264de7betrololol233f86c7ad4c3");
+
+LoadDateDimension(name="Commit",includeTime="true");
+GenerateMaql(maqlFile="commitdate.maql");
+ExecuteMaql(maqlFile="commitdate.maql");
+
+LoadDateDimension(name="Creation",includeTime="true");
+GenerateMaql(maqlFile="creationdate.maql");
+ExecuteMaql(maqlFile="creationdate.maql");
+
+LoadCsv(csvDataFile="commits.csv", configFile="commits.xml");
+GenerateMaql(maqlFile="commits.maql");
+ExecuteMaql(maqlFile="commits.maql");
+
+LoadCsv(csvDataFile="commits.csv", configFile="commits.xml");
+TransferData();

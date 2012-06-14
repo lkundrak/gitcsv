@@ -1,0 +1,95 @@
+<!-- See documentation at http://developer.gooddata.com/gooddata-cl/xml-config.html -->
+
+<schema>
+  <name>GIT Commits</name>
+  <columns>
+    <column>
+      <name>repository</name>
+      <title>Repository</title>
+      <ldmType>ATTRIBUTE</ldmType>
+      <reference>repository</reference>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>gitcommit</name>
+      <title>GIT Commit</title>
+      <ldmType>CONNECTION_POINT</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>author</name>
+      <title>Author</title>
+      <ldmType>ATTRIBUTE</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>authoraddress</name>
+      <title>Author Address</title>
+      <folder>GIT Commits</folder>
+      <ldmType>LABEL</ldmType>
+      <reference>author</reference>
+    </column>
+    <column>
+      <name>creationtimestamp</name>
+      <title>Creation Timestamp</title>
+      <ldmType>DATE</ldmType>
+      <datetime>true</datetime>
+      <format>UNIXTIME</format>
+      <schemaReference>Creation</schemaReference>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>commiter</name>
+      <title>Commiter</title>
+      <ldmType>ATTRIBUTE</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>commiteraddress</name>
+      <title>Commiter Address</title>
+      <ldmType>LABEL</ldmType>
+      <reference>commiter</reference>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>committimestamp</name>
+      <title>Commit Timestamp</title>
+      <ldmType>DATE</ldmType>
+      <format>UNIXTIME</format>
+      <datetime>true</datetime>
+      <schemaReference>Commit</schemaReference>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>comment</name>
+      <title>Comment</title>
+      <ldmType>LABEL</ldmType>
+      <reference>gitcommit</reference>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>filestouched</name>
+      <title>Files Touched</title>
+      <ldmType>FACT</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>linesadded</name>
+      <title>Lines Added</title>
+      <ldmType>FACT</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>linesdeleted</name>
+      <title>Lines Deleted</title>
+      <ldmType>FACT</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+    <column>
+      <name>branch</name>
+      <title>Branch</title>
+      <ldmType>ATTRIBUTE</ldmType>
+      <folder>GIT Commits</folder>
+    </column>
+  </columns>
+</schema>
