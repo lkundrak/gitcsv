@@ -4,6 +4,9 @@
 # Assigns a semi-intelligently decided branch to each commit.
 # Should be rather robust when it comes to various weirdnesses.
 
+use Cwd;
+use File::Basename;
+
 use strict;
 use warnings;
 
@@ -14,16 +17,13 @@ sub branches
 	open (my $refs, '-|', 'git', 'show-ref');
 	open (my $head, '-|', 'git', 'symbolic-ref', '-q', 'refs/remotes/origin/HEAD');
 	$_ = <$head>;
-	$_ ||= 'master';
+	$_ ||= 'refs/remotes/origin/master';
 	chomp;
 
 	# HEAD branch, and following from the oldest
 	return $_, map { $_->[0] } sort { $a->[1] <=> $b->[1] } map {
 		open (my $timestamp, '-|', 'git', 'log', '--pretty=%ct', $_, '-1');
 		[ $_ => <$timestamp> ]
-		# From the shortest
-		#open (my $revlist, '-|', 'git', 'rev-list', $_);
-		#[ $_ => @{[<$revlist>]} ];
 	} map {
 		open (my $symref, '-|', 'git', 'symbolic-ref', '-q', $_);
 		<$symref> ? () : $_;
@@ -41,7 +41,7 @@ sub shortlog
 	# we separate the log entries with '#' to detect such cases
 	open (my $log, '-|', 'git', 'log', '--date=short',
 		'--shortstat', ($root ? '--first-parent' : ()),
-		'--pretty=#%n%h%n%aN%n%aE%n%ad%n%at%n%cN%n%cE%n%cd%n%ct%n%s', #'-2',
+		'--pretty=#%n%h%n%aN%n%aE%n%at%n%cN%n%cE%n%ct%n%s', #'-2',
 		($root ? "$root.." : '').($branch || 'HEAD'));
 	<$log>; # skip first '#'
 	return $log;
@@ -51,43 +51,61 @@ sub shortlog
 sub printrow
 {
 	print join ',', map { "\"$_\"" } 
-		map { s/"/""/g; $_ }
+		map { s/(["\\"])/_/g; $_ }
+		map { s/(.{250}).*/$1.../g; $_ }
 		map { $_ } @_;
 	print "\n";
 }
 
-my %processed;
+sub processrepo
+{
+	my $repo = shift;
 
-printrow ('Commit ID', 'Author Name', 'Author Address',
-	'Author Date', 'Author Time', 'Committer Name',
-	'Committer Address', 'Committer Date', 'Committer Time',
-	'Subject', 'Files changed', 'Lines Added', 'Lines Deleted', 'Branch');
+	my %processed;
+	my $head;
 
-my $head;
-BRANCH: foreach my $branch (branches) {
-	my $log = shortlog ($branch, $head);
+	local $ENV{GIT_DIR};
+	$ENV{GIT_DIR} = "$repo/.git" unless $repo eq '.';
 
-	# Assume first is head
-	$head = $branch unless $head;
+	BRANCH: foreach my $branch (branches) {
 
-	while (grep { $_ } my @row = map { chomp if $_; $_ }
-		map { scalar <$log> } (0..10)) {
-		if (not defined $row[10] or $row[10] eq '#') {
-			# Commit entry terminated too soon, no shortstat entry
-			@row[10..12] = (0, 0, 0);
-		} elsif ($row[10] eq '') {
-			# Empty line always introduces shortstat
-			@row[10..12] = <$log> =~
-				/(\d+) files? changed.*\D(\d+) insertions?.*\D(\d+) deletions?/
-				or die 'Malformed shortstat';
-			<$log>; # Skip '#'
-		} else {
-			die 'Unexpected input';
-		}
-		# Proceed with next branch once we meet with an already processed one
-		next BRANCH if exists $processed{$row[0]};
-		$processed{$row[0]} = undef;
+		my $log = shortlog ($branch, $head);
+
 		$branch =~ /([^\/]*)$/ or die 'Weird branch name';
-		printrow (@row, $1);
+		my $branchname = $1;
+
+		# Assume first is head
+		$head = $branch unless $head;
+
+		while (grep { $_ } my @row = map { chomp if $_; $_ }
+			map { scalar <$log> } (0..8)) {
+			if (not defined $row[8] or $row[8] eq '#') {
+				# Commit entry terminated too soon, no shortstat entry
+				@row[8..10] = (0, 0, 0);
+			} elsif ($row[8] eq '') {
+				# Empty line always introduces shortstat
+				@row[8..10] = <$log> =~
+					/(\d+) files? changed.*\D(\d+) insertions?.*\D(\d+) deletions?/
+					or die 'Malformed shortstat';
+				<$log>; # Skip '#'
+			} else {
+				die 'Unexpected input';
+			}
+			# Proceed with next branch once we meet with an already processed one
+			next BRANCH if exists $processed{$row[0]};
+			$processed{$row[0]} = undef;
+
+			$repo = basename (cwd) if $repo eq '.';
+			printrow ($repo, @row, $branchname);
+		}
 	}
 }
+
+printrow ('Repository', 'GIT Commit', 'Author', 'Author Address',
+	'Author Time', 'Committer',
+	'Committer Address', 'Committer Time',
+	'Subject', 'Files changed', 'Lines Added', 'Lines Deleted',
+	'Branch');
+
+@ARGV = ('.') unless @ARGV;
+processrepo ($_) foreach @ARGV;
